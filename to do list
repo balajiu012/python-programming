@@ -1,0 +1,51 @@
+import json
+
+def load_data():
+    try:
+        with open("todos.json", "r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        data = {"tasks": []}
+    return data
+
+def save_data(data):
+    with open("todos.json", "w") as file:
+        json.dump(data, file)
+
+def display_todos(todos):
+    print("To-Do List:")
+    for index, task in enumerate(todos, start=1):
+        status = "[ ]" if not task["completed"] else "[X]"
+        print(f"{index}. {status} {task['content']}")
+
+def add_todo(todos, content):
+    todos.append({"content": content, "completed": False})
+
+def update_todo(todos, index):
+    if 1 <= index <= len(todos):
+        todos[index - 1]["completed"] = not todos[index - 1]["completed"]
+
+def main():
+    data = load_data()
+    todos = data["tasks"]
+
+    while True:
+        display_todos(todos)
+
+        action = input("Enter action (add/update/exit): ").lower()
+
+        if action == "add":
+            content = input("Enter task: ")
+            add_todo(todos, content)
+        elif action == "update":
+            index = int(input("Enter task number to update: "))
+            update_todo(todos, index)
+        elif action == "exit":
+            save_data(data)
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid action. Please enter 'add', 'update', or 'exit'.")
+
+if __name__ == "__main__":
+    main()
